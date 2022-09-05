@@ -1,0 +1,11 @@
+[package]
+name = "duex_cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "duex-cli"
+path = "bin/cli.rs"
+
+[dependencies]
+duex_lexer = { path = "../duex_lexer" }

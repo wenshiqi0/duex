@@ -1,0 +1,15 @@
+[package]
+name = "deux"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+duex_parser = { path = "./duex_parser" }
+duex_lexer = { path = "./duex_lexer" }
+
+[workspace]
+members = [
+    "duex_parser",
+    "duex_lexer",
+    "duex_cli"
+]
