@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 duex_parser = { path = "../duex_parser" }
+duex_syntax = { path = "../duex_syntax" }

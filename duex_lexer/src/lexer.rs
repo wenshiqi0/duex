@@ -1,9 +1,12 @@
 use duex_parser::{flow, parse, token, Flow};
+use duex_syntax::Node;
 
 use crate::config::LexerConfig;
 
 pub struct Lexer {
     config: LexerConfig,
+
+    syntax_tree: Node,
 
     done: bool,
 
@@ -15,6 +18,7 @@ impl Lexer {
     pub fn new(config: LexerConfig) -> Lexer {
         Lexer {
             config,
+            syntax_tree: Node::new(),
             done: false,
             index: 0,
             offset: 0,
