@@ -2,6 +2,7 @@
 mod tests {
     use duex_lexer::config::LexerConfig;
     use duex_lexer::LexerBuilder;
+    use duex_syntax::node::debug_syntax_tree;
     use std::fs::File;
     use std::io::Read;
 
@@ -13,11 +14,14 @@ mod tests {
         let mut lexer = LexerBuilder::build(LexerConfig {
             source: content.to_owned(),
         });
+
         loop {
             match lexer.next() {
-                Some(token) => println!("{}", token),
+                Some(_) => {}
                 None => break,
             }
         }
+
+        debug_syntax_tree(lexer.get_grammar());
     }
 }

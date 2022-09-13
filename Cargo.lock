@@ -29,10 +29,10 @@ dependencies = [
 [[package]]
 name = "duex_parser"
 version = "0.1.0"
+dependencies = [
+ "duex_syntax",
+]
 
 [[package]]
 name = "duex_syntax"
 version = "0.1.0"
-dependencies = [
- "duex_parser",
-]

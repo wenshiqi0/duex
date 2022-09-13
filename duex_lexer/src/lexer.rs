@@ -1,12 +1,15 @@
-use duex_parser::{flow, parse, token, Flow};
-use duex_syntax::Node;
+use std::{cell::RefCell, rc::Rc};
+
+use duex_parser::{parse, preparse, Words};
+use duex_syntax::{node::Node, token::Token, NodeBuilder};
 
 use crate::config::LexerConfig;
 
 pub struct Lexer {
     config: LexerConfig,
 
-    syntax_tree: Node,
+    grammar: Rc<RefCell<Node>>,
+    current: Rc<RefCell<Node>>,
 
     done: bool,
 
@@ -16,17 +19,42 @@ pub struct Lexer {
 
 impl Lexer {
     pub fn new(config: LexerConfig) -> Lexer {
+        let grammar = NodeBuilder::init();
+        let current = grammar.clone();
+
         Lexer {
             config,
-            syntax_tree: Node::new(),
+            grammar,
+            current,
             done: false,
             index: 0,
             offset: 0,
         }
     }
 
-    pub fn next(&mut self) -> Option<token::Token> {
-        let mut token: Option<token::Token> = None;
+    pub fn get_grammar(&self) -> Rc<RefCell<Node>> {
+        self.grammar.clone()
+    }
+
+    fn parse_token(&mut self, index: usize) -> Option<Token> {
+        let source = self.config.source.clone();
+        let current = &self.current;
+        let frag = &source[self.index..index];
+        let node = NodeBuilder::build();
+        let t = parse(current, frag);
+        current.borrow_mut().set_sibling(&node);
+        node.borrow_mut().set_state(&t, frag);
+        node.borrow_mut()
+            .set_weak_parent(current.borrow().get_parent());
+        self.current = node;
+        self.index = index;
+        self.offset = 0;
+        Some(t.clone())
+    }
+
+    pub fn next(&mut self) -> Option<Token> {
+        let grammar = &self.grammar.clone();
+        let mut token: Option<Token> = None;
 
         if self.done {
             return None;
@@ -36,17 +64,27 @@ impl Lexer {
             let source = self.config.source.clone();
             let bytes = source.as_bytes();
             let index = self.index + self.offset;
-
-            match flow(bytes, index) {
-                Flow::Next => self.offset += 1,
-                Flow::Break => {
-                    if self.offset == 0 {
-                        self.index += 1;
-                    } else {
-                        let frag = &source[self.index..index];
-                        token = Some(parse(frag));
-                        self.index = index + 1;
-                        self.offset = 0;
+            match preparse(bytes, index) {
+                Words::Normal => {
+                    let next_word = preparse(bytes, index + 1);
+                    match next_word {
+                        Words::Normal | Words::Numberic => self.offset += 1,
+                        _ => token = self.parse_token(index + 1),
+                    }
+                }
+                Words::Ignore => self.index += 1,
+                Words::Symbol => {
+                    let next_word = preparse(bytes, index + 1);
+                    match next_word {
+                        Words::Symbol => self.offset += 1,
+                        _ => token = self.parse_token(index + 1),
+                    }
+                }
+                Words::Numberic => {
+                    let next_word = preparse(bytes, index + 1);
+                    match next_word {
+                        Words::Numberic => self.offset += 1,
+                        _ => token = self.parse_token(index + 1),
                     }
                 }
             };
@@ -56,10 +94,10 @@ impl Lexer {
                     token = Some(t);
                     break;
                 }
-                None =>  {
+                None => {
                     if index == (bytes.len() - 1) {
                         let frag = &source[self.index..(index + 1)];
-                        token = Some(parse(frag));
+                        token = Some(parse(grammar, frag));
                         self.index = 0;
                         self.offset = 0;
                         self.done = true;

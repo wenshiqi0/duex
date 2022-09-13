@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use duex_parser::token::Token;
+use crate::token::Token;
 
 #[derive(Clone)]
 pub struct SyntaxState {
@@ -20,9 +20,9 @@ impl SyntaxState {
 impl Display for SyntaxState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.token {
+            Token::Start => write!(f, "Start"),
             Token::Unknown => write!(f, "Unknown"),
-            Token::Equal =>  write!(f, "Equal"),
-            Token::Keyword => write!(f, "{}::{}", self.token, self.scope_name),
+            _ => write!(f, "{}::{}", self.token, self.scope_name),
         }
     }
 }

@@ -4,9 +4,7 @@ pub mod lexer;
 use config::LexerConfig;
 use lexer::Lexer;
 
-pub struct LexerBuilder {
-
-}
+pub struct LexerBuilder;
 
 impl LexerBuilder {
     pub fn build(config: LexerConfig) -> Lexer {
