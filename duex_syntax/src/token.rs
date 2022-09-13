@@ -6,6 +6,7 @@ pub enum Token {
     Keyword,
     Equal,
     Variable,
+    Numberic,
     Unknown,
 }
 
@@ -16,6 +17,7 @@ impl fmt::Display for Token {
             Token::Keyword => write!(f, "Keyword"),
             Token::Equal => write!(f, "Equal"),
             Token::Variable => write!(f, "Variable"),
+            Token::Numberic => write!(f, "Numberic"),
             Token::Unknown => write!(f, "Unknown"),
         }
     }

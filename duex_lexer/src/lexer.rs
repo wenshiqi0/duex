@@ -36,12 +36,12 @@ impl Lexer {
         self.grammar.clone()
     }
 
-    fn parse_token(&mut self, index: usize) -> Option<Token> {
+    fn parse_token(&mut self, word: Words, index: usize) -> Option<Token> {
         let source = self.config.source.clone();
         let current = &self.current;
         let frag = &source[self.index..index];
         let node = NodeBuilder::build();
-        let t = parse(current, frag);
+        let t = parse(current, word, frag);
         current.borrow_mut().set_sibling(&node);
         node.borrow_mut().set_state(&t, frag);
         node.borrow_mut()
@@ -64,12 +64,13 @@ impl Lexer {
             let source = self.config.source.clone();
             let bytes = source.as_bytes();
             let index = self.index + self.offset;
-            match preparse(bytes, index) {
+            let word = preparse(bytes, index);
+            match word {
                 Words::Normal => {
                     let next_word = preparse(bytes, index + 1);
                     match next_word {
                         Words::Normal | Words::Numberic => self.offset += 1,
-                        _ => token = self.parse_token(index + 1),
+                        _ => token = self.parse_token(word, index + 1),
                     }
                 }
                 Words::Ignore => self.index += 1,
@@ -77,14 +78,14 @@ impl Lexer {
                     let next_word = preparse(bytes, index + 1);
                     match next_word {
                         Words::Symbol => self.offset += 1,
-                        _ => token = self.parse_token(index + 1),
+                        _ => token = self.parse_token(word, index + 1),
                     }
                 }
                 Words::Numberic => {
                     let next_word = preparse(bytes, index + 1);
                     match next_word {
                         Words::Numberic => self.offset += 1,
-                        _ => token = self.parse_token(index + 1),
+                        _ => token = self.parse_token(word, index + 1),
                     }
                 }
             };
@@ -97,7 +98,7 @@ impl Lexer {
                 None => {
                     if index == (bytes.len() - 1) {
                         let frag = &source[self.index..(index + 1)];
-                        token = Some(parse(grammar, frag));
+                        token = Some(parse(grammar, preparse(bytes, index), frag));
                         self.index = 0;
                         self.offset = 0;
                         self.done = true;

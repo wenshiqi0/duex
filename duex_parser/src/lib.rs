@@ -47,7 +47,7 @@ fn parse_after_keyword(keyword: &str) -> Token {
     }
 }
 
-pub fn parse(last: &Rc<RefCell<Node>>, frag: &str) -> Token {
+pub fn parse(last: &Rc<RefCell<Node>>, word: Words, frag: &str) -> Token {
     let node = last.clone();
     let last_token = node.borrow().get_state().token;
     let last_scope_name = node.borrow().get_state().scope_name;
@@ -55,13 +55,15 @@ pub fn parse(last: &Rc<RefCell<Node>>, frag: &str) -> Token {
     println!("{}", frag);
     // try parse numberic first
 
-
-    match last_token {
-        Token::Keyword => parse_after_keyword(&last_scope_name),
-        _ => match frag {
-            "let" => Token::Keyword,
-            "=" => Token::Equal,
-            _ => Token::Unknown,
+    match word {
+        Words::Numberic => Token::Numberic,
+        _ => match last_token {
+            Token::Keyword => parse_after_keyword(&last_scope_name),
+            _ => match frag {
+                "let" => Token::Keyword,
+                "=" => Token::Equal,
+                _ => Token::Unknown,
+            },
         },
     }
 }
