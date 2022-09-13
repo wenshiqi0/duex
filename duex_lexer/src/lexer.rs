@@ -53,7 +53,6 @@ impl Lexer {
     }
 
     pub fn next(&mut self) -> Option<Token> {
-        let grammar = &self.grammar.clone();
         let mut token: Option<Token> = None;
 
         if self.done {
@@ -65,6 +64,7 @@ impl Lexer {
             let bytes = source.as_bytes();
             let index = self.index + self.offset;
             let word = preparse(bytes, index);
+
             match word {
                 Words::Normal => {
                     let next_word = preparse(bytes, index + 1);
@@ -97,11 +97,11 @@ impl Lexer {
                 }
                 None => {
                     if index == (bytes.len() - 1) {
-                        let frag = &source[self.index..(index + 1)];
-                        token = Some(parse(grammar, preparse(bytes, index), frag));
+                        let final_token = self.parse_token(word, index + 1);
                         self.index = 0;
                         self.offset = 0;
                         self.done = true;
+                        return final_token;
                     }
                 }
             };

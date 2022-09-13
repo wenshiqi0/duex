@@ -6,6 +6,7 @@ use ascii::ASCII;
 
 use duex_syntax::{node::Node, token::Token};
 
+#[derive(Copy, Clone)]
 pub enum Words {
     Normal,
     Ignore,
