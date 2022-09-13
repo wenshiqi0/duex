@@ -52,9 +52,7 @@ pub fn parse(last: &Rc<RefCell<Node>>, word: Words, frag: &str) -> Token {
     let last_token = node.borrow().get_state().token;
     let last_scope_name = node.borrow().get_state().scope_name;
 
-    println!("{}", frag);
     // try parse numberic first
-
     match word {
         Words::Numberic => Token::Numberic,
         _ => match last_token {
