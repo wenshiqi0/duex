@@ -97,11 +97,10 @@ impl Lexer {
                 }
                 None => {
                     if index == (bytes.len() - 1) {
-                        let final_token = self.parse_token(word, index + 1);
+                        token = self.parse_token(word, index + 1);
                         self.index = 0;
                         self.offset = 0;
                         self.done = true;
-                        return final_token;
                     }
                 }
             };
