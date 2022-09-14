@@ -17,7 +17,7 @@ mod tests {
 
         loop {
             match lexer.next() {
-                Some(_) => {}
+                Some(_) => {},
                 None => break,
             }
         }

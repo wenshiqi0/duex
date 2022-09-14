@@ -4,6 +4,9 @@ pub enum ASCII {
     Return = 13,
     Whitespace = 32,
 
+    Plus = 43,
+    Dot = 46,
+
     // number
     Zero = 48,
     One = 49,
@@ -26,6 +29,9 @@ pub fn from_u8(num: u8) -> Option<ASCII> {
         10 => Some(ASCII::Newline),
         13 => Some(ASCII::Return),
         32 => Some(ASCII::Whitespace),
+
+        43 => Some(ASCII::Plus),
+        46 => Some(ASCII::Dot),
 
         48 => Some(ASCII::Zero),
         49 => Some(ASCII::One),

@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use duex_parser::{parse, preparse, Words};
+use duex_parser::{parse, preparse, Character};
 use duex_syntax::{node::Node, token::Token, NodeBuilder};
 
 use crate::config::LexerConfig;
@@ -36,23 +36,56 @@ impl Lexer {
         self.grammar.clone()
     }
 
-    fn parse_token(&mut self, word: Words, index: usize) -> Option<Token> {
+    fn parse_token(&mut self, t: Token, index: usize, do_create_node: bool) -> Option<Token> {
         let source = self.config.source.clone();
         let current = &self.current;
+        let current_state = current.borrow().get_state().clone();
         let frag = &source[self.index..index];
-        let node = NodeBuilder::build();
-        let t = parse(current, word, frag);
-        current.borrow_mut().set_sibling(&node);
-        node.borrow_mut().set_state(&t, frag);
-        node.borrow_mut()
-            .set_weak_parent(current.borrow().get_parent());
-        self.current = node;
+
+        if do_create_node {
+            let node = NodeBuilder::build();
+            match current_state.token {
+                Token::Start => {
+                    current.borrow_mut().set_first_child(&node);
+                    node.borrow_mut().set_state(&t, frag);
+                    node.borrow_mut()
+                        .set_weak_parent(Some(Rc::downgrade(current)));
+                }
+                _ => {
+                    current.borrow_mut().set_sibling(&node);
+                    node.borrow_mut().set_state(&t, frag);
+                    node.borrow_mut()
+                        .set_weak_parent(current.borrow().get_parent());
+                }
+            };
+            self.current = node;
+        }
+
         self.index = index;
         self.offset = 0;
         Some(t.clone())
     }
 
-    pub fn next(&mut self) -> Option<Token> {
+    fn parse_token_with_ch(&mut self, ch: Character, index: usize, do_create_node: bool) -> Option<Token> {
+        let source = self.config.source.clone();
+        let current = &self.current;
+        let frag = &source[self.index..index];
+        let token = parse(current, ch, frag);
+        self.parse_token(token.clone(), index, do_create_node);
+        Some(token)
+    }
+
+    fn parse_dot_dot(&mut self) -> Option<Token> {
+        self.index += 2;
+        Some(Token::Unknown)
+    }
+
+    fn parse_dot_dot_dot(&mut self) -> Option<Token> {
+        self.index += 3;
+        Some(Token::Unknown)
+    }
+
+    fn parse_next(&mut self) -> Option<Token> {
         let mut token: Option<Token> = None;
 
         if self.done {
@@ -63,29 +96,42 @@ impl Lexer {
             let source = self.config.source.clone();
             let bytes = source.as_bytes();
             let index = self.index + self.offset;
-            let word = preparse(bytes, index);
+            let ch = preparse(bytes, index);
 
-            match word {
-                Words::Normal => {
-                    let next_word = preparse(bytes, index + 1);
-                    match next_word {
-                        Words::Normal | Words::Numberic => self.offset += 1,
-                        _ => token = self.parse_token(word, index + 1),
+            match ch {
+                Character::Letter => {
+                    let next_ch = preparse(bytes, index + 1);
+                    match next_ch {
+                        Character::Letter | Character::Numberic => self.offset += 1,
+                        _ => token = self.parse_token_with_ch(ch, index + 1, true),
                     }
                 }
-                Words::Ignore => self.index += 1,
-                Words::Symbol => {
-                    let next_word = preparse(bytes, index + 1);
-                    match next_word {
-                        Words::Symbol => self.offset += 1,
-                        _ => token = self.parse_token(word, index + 1),
+                Character::Ignore => self.index += 1,
+                Character::Dot => {
+                    let next_ch = preparse(bytes, index + 1);
+                    let next_next_ch = preparse(bytes, index + 2);
+                    token = match next_ch {
+                        Character::Dot => {
+                            match next_next_ch {
+                                Character::Dot => self.parse_dot_dot_dot(),
+                                _ => self.parse_dot_dot(),
+                            }
+                        }
+                        _ => self.parse_token(Token::Dot, index + 1, true),
+                    };
+                }
+                Character::Symbol => {
+                    let next_ch = preparse(bytes, index + 1);
+                    match next_ch {
+                        Character::Symbol => self.offset += 1,
+                        _ => token = self.parse_token_with_ch(ch, index + 1, true),
                     }
                 }
-                Words::Numberic => {
-                    let next_word = preparse(bytes, index + 1);
-                    match next_word {
-                        Words::Numberic => self.offset += 1,
-                        _ => token = self.parse_token(word, index + 1),
+                Character::Numberic => {
+                    let next_ch = preparse(bytes, index + 1);
+                    match next_ch {
+                        Character::Numberic => self.offset += 1,
+                        _ => token = self.parse_token_with_ch(ch, index + 1, true),
                     }
                 }
             };
@@ -97,7 +143,7 @@ impl Lexer {
                 }
                 None => {
                     if index == (bytes.len() - 1) {
-                        token = self.parse_token(word, index + 1);
+                        token = self.parse_token_with_ch(ch, index + 1, true);
                         self.index = 0;
                         self.offset = 0;
                         self.done = true;
@@ -107,5 +153,9 @@ impl Lexer {
         }
 
         token
+    }
+
+    pub fn next(&mut self, ) -> Option<Token> {
+        self.parse_next()
     }
 }
