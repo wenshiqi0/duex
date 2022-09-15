@@ -174,6 +174,16 @@ impl Lexer {
                     }
                     self.is_after_dot = false;
                 }
+                Character::Quote | Character::DoubleQuote => {
+
+                }
+                Character::BackQuote => {
+
+                }
+                Character::Unknown => {
+                    self.index += 1;
+                    self.offset = 0;
+                }
             };
 
             match token {

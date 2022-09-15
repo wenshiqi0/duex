@@ -25,6 +25,8 @@ pub enum Token {
     LeftBrace,
     RightBrace,
 
+    String,
+
     Unknown,
 }
 
@@ -49,6 +51,7 @@ impl fmt::Display for Token {
             Token::RightBracket => write!(f, "RightBracket"),
             Token::LeftBrace => write!(f, "LeftBrace"),
             Token::RightBrace => write!(f, "RightBrace"),
+            Token::String => write!(f, "String"),
             Token::Unknown => write!(f, "Unknown"),
         }
     }

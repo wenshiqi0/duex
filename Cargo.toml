@@ -7,11 +7,13 @@ edition = "2021"
 duex_parser = { path = "./duex_parser" }
 duex_lexer = { path = "./duex_lexer" }
 duex_syntax = { path = "./duex_syntax" }
+duex_runtime = { path = "./duex_runtime" }
 
 [workspace]
 members = [
     "duex_syntax",
     "duex_parser",
     "duex_lexer",
+    "duex_runtime",
     "duex_cli"
 ]

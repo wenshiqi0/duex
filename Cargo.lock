@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "duex_lexer",
  "duex_parser",
+ "duex_runtime",
  "duex_syntax",
 ]
 
@@ -32,6 +33,10 @@ version = "0.1.0"
 dependencies = [
  "duex_syntax",
 ]
+
+[[package]]
+name = "duex_runtime"
+version = "0.1.0"
 
 [[package]]
 name = "duex_syntax"

@@ -24,6 +24,12 @@ pub enum Character {
     LeftBrace,
     RightBrace,
     // Block,
+
+    Quote,
+    DoubleQuote,
+    BackQuote,
+
+    Unknown,
 }
 
 pub fn preparse(bytes: &[u8], index: usize) -> Character {
@@ -50,6 +56,64 @@ pub fn preparse(bytes: &[u8], index: usize) -> Character {
             ASCII::LeftBracket => Character::LeftBracket,
             ASCII::RightBracket => Character::RightBracket,
 
+            ASCII::Underscore
+            | ASCII::LowA
+            | ASCII::LowB
+            | ASCII::LowC
+            | ASCII::LowD
+            | ASCII::LowE
+            | ASCII::LowF
+            | ASCII::LowG
+            | ASCII::LowH
+            | ASCII::LowI
+            | ASCII::LowJ
+            | ASCII::LowK
+            | ASCII::LowL
+            | ASCII::LowM
+            | ASCII::LowN
+            | ASCII::LowO
+            | ASCII::LowP
+            | ASCII::LowQ
+            | ASCII::LowR
+            | ASCII::LowS
+            | ASCII::LowT
+            | ASCII::LowU
+            | ASCII::LowV
+            | ASCII::LowW
+            | ASCII::LowX
+            | ASCII::LowY
+            | ASCII::LowZ
+            | ASCII::CapA
+            | ASCII::CapB
+            | ASCII::CapC
+            | ASCII::CapD
+            | ASCII::CapE
+            | ASCII::CapF
+            | ASCII::CapG
+            | ASCII::CapH
+            | ASCII::CapI
+            | ASCII::CapJ
+            | ASCII::CapK
+            | ASCII::CapL
+            | ASCII::CapM
+            | ASCII::CapN
+            | ASCII::CapO
+            | ASCII::CapP
+            | ASCII::CapQ
+            | ASCII::CapR
+            | ASCII::CapS
+            | ASCII::CapT
+            | ASCII::CapU
+            | ASCII::CapV
+            | ASCII::CapW
+            | ASCII::CapX
+            | ASCII::CapY
+            | ASCII::CapZ => Character::Letter,
+
+            ASCII::Quote => Character::Quote,
+            ASCII::DoubleQuote => Character::DoubleQuote,
+            ASCII::BackQuote => Character::BackQuote,
+
             // numberic
             ASCII::Zero
             | ASCII::One
@@ -60,9 +124,12 @@ pub fn preparse(bytes: &[u8], index: usize) -> Character {
             | ASCII::Six
             | ASCII::Seven
             | ASCII::Eight
-            | ASCII::Nine => Character::Numberic,
+            | ASCII::Nine => match preparse(bytes, index - 1) {
+                Character::Letter => Character::Letter,
+                _ => Character::Numberic,
+            },
         },
-        None => Character::Letter,
+        None => Character::Unknown,
     }
 }
 

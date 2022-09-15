@@ -5,27 +5,17 @@ pub enum ASCII {
     Return = 13,
     Whitespace = 32,
 
+    DoubleQuote = 34,
+    Quote = 39,
+
     // 小括号
     LeftParenthes = 40,
     RightParenthes = 41,
-    // 中括号
-    LeftBracket = 91,
-    RightBracket = 93,
-    // 大括号
-    LeftBrace = 123,
-    RightBrace = 125,
 
-    // symbol
     Plus = 43,
-    Equal = 61,
-
-    // dot
     Dot = 46,
 
-    // semicolon
-    Semicolon = 59,
-
-    // number
+    // 数字
     Zero = 48,
     One = 49,
     Two = 50,
@@ -36,6 +26,78 @@ pub enum ASCII {
     Seven = 55,
     Eight = 56,
     Nine = 57,
+
+    Semicolon = 59,
+    Equal = 61,
+
+    // 大写字母
+    CapA = 65,
+    CapB = 66,
+    CapC = 67,
+    CapD = 68,
+    CapE = 69,
+    CapF = 70,
+    CapG = 71,
+    CapH = 72,
+    CapI = 73,
+    CapJ = 74,
+    CapK = 75,
+    CapL = 76,
+    CapM = 77,
+    CapN = 78,
+    CapO = 79,
+    CapP = 80,
+    CapQ = 81,
+    CapR = 82,
+    CapS = 83,
+    CapT = 84,
+    CapU = 85,
+    CapV = 86,
+    CapW = 87,
+    CapX = 88,
+    CapY = 89,
+    CapZ = 90,
+
+    // 中括号
+    LeftBracket = 91,
+    RightBracket = 93,
+
+    // 下划线
+    Underscore = 95,
+
+    BackQuote = 96,
+
+    // 小写字母
+    LowA = 97,
+    LowB = 98,
+    LowC = 99,
+    LowD = 100,
+    LowE = 101,
+    LowF = 102,
+    LowG = 103,
+    LowH = 104,
+    LowI = 105,
+    LowJ = 106,
+    LowK = 107,
+    LowL = 108,
+    LowM = 109,
+    LowN = 110,
+    LowO = 111,
+    LowP = 112,
+    LowQ = 113,
+    LowR = 114,
+    LowS = 115,
+    LowT = 116,
+    LowU = 117,
+    LowV = 118,
+    LowW = 119,
+    LowX = 120,
+    LowY = 121,
+    LowZ = 122,
+
+    // 大括号
+    LeftBrace = 123,
+    RightBrace = 125,
 }
 
 pub fn from_u8(num: u8) -> Option<ASCII> {
@@ -43,17 +105,12 @@ pub fn from_u8(num: u8) -> Option<ASCII> {
         10 => Some(ASCII::Newline),
         13 => Some(ASCII::Return),
         32 => Some(ASCII::Whitespace),
-
+        34 => Some(ASCII::DoubleQuote),
+        39 => Some(ASCII::Quote),
         40 => Some(ASCII::LeftParenthes),
         41 => Some(ASCII::RightParenthes),
-        91 => Some(ASCII::LeftBracket),
-        93 => Some(ASCII::RightBracket),
-        123 => Some(ASCII::LeftBrace),
-        125 => Some(ASCII::RightBrace),
-
         43 => Some(ASCII::Plus),
         46 => Some(ASCII::Dot),
-
         48 => Some(ASCII::Zero),
         49 => Some(ASCII::One),
         50 => Some(ASCII::Two),
@@ -64,9 +121,66 @@ pub fn from_u8(num: u8) -> Option<ASCII> {
         55 => Some(ASCII::Seven),
         56 => Some(ASCII::Eight),
         57 => Some(ASCII::Nine),
-
         59 => Some(ASCII::Semicolon),
         61 => Some(ASCII::Equal),
+        65 => Some(ASCII::CapA),
+        66 => Some(ASCII::CapB),
+        67 => Some(ASCII::CapC),
+        68 => Some(ASCII::CapD),
+        69 => Some(ASCII::CapE),
+        70 => Some(ASCII::CapF),
+        71 => Some(ASCII::CapG),
+        72 => Some(ASCII::CapH),
+        73 => Some(ASCII::CapI),
+        74 => Some(ASCII::CapJ),
+        75 => Some(ASCII::CapK),
+        76 => Some(ASCII::CapL),
+        77 => Some(ASCII::CapM),
+        78 => Some(ASCII::CapN),
+        79 => Some(ASCII::CapO),
+        80 => Some(ASCII::CapP),
+        81 => Some(ASCII::CapQ),
+        82 => Some(ASCII::CapR),
+        83 => Some(ASCII::CapS),
+        84 => Some(ASCII::CapT),
+        85 => Some(ASCII::CapU),
+        86 => Some(ASCII::CapV),
+        87 => Some(ASCII::CapW),
+        88 => Some(ASCII::CapX),
+        89 => Some(ASCII::CapY),
+        90 => Some(ASCII::CapZ),
+        91 => Some(ASCII::LeftBracket),
+        93 => Some(ASCII::RightBracket),
+        95 => Some(ASCII::Underscore),
+        96 => Some(ASCII::BackQuote),
+        97 => Some(ASCII::LowA),
+        98 => Some(ASCII::LowB),
+        99 => Some(ASCII::LowC),
+        100 => Some(ASCII::LowD),
+        101 => Some(ASCII::LowE),
+        102 => Some(ASCII::LowF),
+        103 => Some(ASCII::LowG),
+        104 => Some(ASCII::LowH),
+        105 => Some(ASCII::LowI),
+        106 => Some(ASCII::LowJ),
+        107 => Some(ASCII::LowK),
+        108 => Some(ASCII::LowL),
+        109 => Some(ASCII::LowM),
+        110 => Some(ASCII::LowN),
+        111 => Some(ASCII::LowO),
+        112 => Some(ASCII::LowP),
+        113 => Some(ASCII::LowQ),
+        114 => Some(ASCII::LowR),
+        115 => Some(ASCII::LowS),
+        116 => Some(ASCII::LowT),
+        117 => Some(ASCII::LowU),
+        118 => Some(ASCII::LowV),
+        119 => Some(ASCII::LowW),
+        120 => Some(ASCII::LowX),
+        121 => Some(ASCII::LowY),
+        122 => Some(ASCII::LowZ),
+        123 => Some(ASCII::LeftBrace),
+        125 => Some(ASCII::RightBrace),
         _ => None,
     }
 }
