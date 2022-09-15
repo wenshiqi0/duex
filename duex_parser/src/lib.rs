@@ -14,8 +14,15 @@ pub enum Character {
     Letter,
     Ignore,
     Numberic,
-    Symbol,
+    Operation,
     Dot,
+
+    LeftParenthes,
+    RightParenthes,
+    LeftBracket,
+    RightBracket,
+    LeftBrace,
+    RightBrace,
     // Block,
 }
 
@@ -29,11 +36,19 @@ pub fn preparse(bytes: &[u8], index: usize) -> Character {
             }
 
             // symbol
-            ASCII::Equal => Character::Symbol,
-            ASCII::Plus => Character::Symbol,
+            ASCII::Equal => Character::Operation,
+            ASCII::Plus => Character::Operation,
 
             // dot
             ASCII::Dot => Character::Dot,
+
+            // 括号
+            ASCII::LeftParenthes => Character::LeftParenthes,
+            ASCII::RightParenthes => Character::RightParenthes,
+            ASCII::LeftBrace => Character::LeftBrace,
+            ASCII::RightBrace => Character::RightBrace,
+            ASCII::LeftBracket => Character::LeftBracket,
+            ASCII::RightBracket => Character::RightBracket,
 
             // numberic
             ASCII::Zero
@@ -142,6 +157,7 @@ pub fn parse(last: &Rc<RefCell<Node>>, character: Character, frag: &str) -> Toke
                 "let" | "const" => Token::Keyword,
                 "=" => Token::Equal,
                 "+=" => Token::PlusEqual,
+                "++" => Token::PlusPlus,
                 _ => try_find_scope_name(last, frag.clone()),
             },
         },

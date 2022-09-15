@@ -12,6 +12,7 @@ pub struct Lexer {
     current: Rc<RefCell<Node>>,
 
     done: bool,
+    is_after_dot: bool,
 
     index: usize,
     offset: usize,
@@ -27,6 +28,7 @@ impl Lexer {
             grammar,
             current,
             done: false,
+            is_after_dot: false,
             index: 0,
             offset: 0,
         }
@@ -66,7 +68,12 @@ impl Lexer {
         Some(t.clone())
     }
 
-    fn parse_token_with_ch(&mut self, ch: Character, index: usize, do_create_node: bool) -> Option<Token> {
+    fn parse_token_with_ch(
+        &mut self,
+        ch: Character,
+        index: usize,
+        do_create_node: bool,
+    ) -> Option<Token> {
         let source = self.config.source.clone();
         let current = &self.current;
         let frag = &source[self.index..index];
@@ -103,29 +110,61 @@ impl Lexer {
                     let next_ch = preparse(bytes, index + 1);
                     match next_ch {
                         Character::Letter | Character::Numberic => self.offset += 1,
-                        _ => token = self.parse_token_with_ch(ch, index + 1, true),
+                        Character::LeftParenthes => {
+                            token = self.parse_token(Token::Method, index + 1, true);
+                            self.is_after_dot = false;
+                        }
+                        _ => {
+                            if self.is_after_dot {
+                                token = self.parse_token(Token::Property, index + 1, true);
+                            } else {
+                                token = self.parse_token_with_ch(ch, index + 1, true);
+                            }
+                            self.is_after_dot = false;
+                        }
                     }
                 }
-                Character::Ignore => self.index += 1,
+                Character::LeftParenthes => {
+                    token = self.parse_token(Token::LeftParenthes, index + 1, true)
+                }
+                Character::RightParenthes => {
+                    token = self.parse_token(Token::RightParenthes, index + 1, true)
+                }
+                Character::LeftBracket => {
+                    token = self.parse_token(Token::LeftBracket, index + 1, true)
+                }
+                Character::RightBracket => {
+                    token = self.parse_token(Token::RightBracket, index + 1, true)
+                }
+                Character::LeftBrace => token = self.parse_token(Token::LeftBrace, index + 1, true),
+                Character::RightBrace => {
+                    token = self.parse_token(Token::RightBrace, index + 1, true)
+                }
+                Character::Ignore => {
+                    self.index += 1;
+                    self.is_after_dot = false;
+                }
                 Character::Dot => {
                     let next_ch = preparse(bytes, index + 1);
                     let next_next_ch = preparse(bytes, index + 2);
                     token = match next_ch {
-                        Character::Dot => {
-                            match next_next_ch {
-                                Character::Dot => self.parse_dot_dot_dot(),
-                                _ => self.parse_dot_dot(),
-                            }
+                        Character::Dot => match next_next_ch {
+                            Character::Dot => self.parse_dot_dot_dot(),
+                            _ => self.parse_dot_dot(),
+                        },
+                        _ => {
+                            self.is_after_dot = true;
+                            self.parse_token(Token::Dot, index + 1, true)
                         }
-                        _ => self.parse_token(Token::Dot, index + 1, true),
                     };
                 }
-                Character::Symbol => {
+                Character::Operation => {
                     let next_ch = preparse(bytes, index + 1);
                     match next_ch {
-                        Character::Symbol => self.offset += 1,
+                        Character::Operation => self.offset += 1,
                         _ => token = self.parse_token_with_ch(ch, index + 1, true),
                     }
+                    self.is_after_dot = false;
                 }
                 Character::Numberic => {
                     let next_ch = preparse(bytes, index + 1);
@@ -133,6 +172,7 @@ impl Lexer {
                         Character::Numberic => self.offset += 1,
                         _ => token = self.parse_token_with_ch(ch, index + 1, true),
                     }
+                    self.is_after_dot = false;
                 }
             };
 
@@ -143,8 +183,15 @@ impl Lexer {
                 }
                 None => {
                     if index == (bytes.len() - 1) {
-                        token = self.parse_token_with_ch(ch, index + 1, true);
-                        self.index = 0;
+                        token = self.parse_token_with_ch(ch, index + 1, false);
+                        match token.clone() {
+                            None => (),
+                            Some(t) => match t {
+                                Token::Unknown => token = None,
+                                _ => token = self.parse_token_with_ch(ch, index + 1, true),
+                            },
+                        }
+                        // self.index = 0;
                         self.offset = 0;
                         self.done = true;
                     }
@@ -155,7 +202,7 @@ impl Lexer {
         token
     }
 
-    pub fn next(&mut self, ) -> Option<Token> {
+    pub fn next(&mut self) -> Option<Token> {
         self.parse_next()
     }
 }

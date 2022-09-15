@@ -4,15 +4,27 @@ use std::fmt;
 pub enum Token {
     Start,
     Keyword,
+
     Equal,
     PlusEqual,
+    PlusPlus,
+
     Variable,
     Constant,
+
     Numberic,
     Global,
     Dot,
     Property,
     Method,
+
+    LeftParenthes,
+    RightParenthes,
+    LeftBracket,
+    RightBracket,
+    LeftBrace,
+    RightBrace,
+
     Unknown,
 }
 
@@ -23,6 +35,7 @@ impl fmt::Display for Token {
             Token::Keyword => write!(f, "Keyword"),
             Token::Equal => write!(f, "Equal"),
             Token::PlusEqual => write!(f, "PlusEqual"),
+            Token::PlusPlus => write!(f, "PlusPlus"),
             Token::Variable => write!(f, "Variable"),
             Token::Constant => write!(f, "Constant"),
             Token::Numberic => write!(f, "Numberic"),
@@ -30,6 +43,12 @@ impl fmt::Display for Token {
             Token::Dot => write!(f, "Dot"),
             Token::Property => write!(f, "Property"),
             Token::Method => write!(f, "Method"),
+            Token::LeftParenthes => write!(f, "LeftParenthes"),
+            Token::RightParenthes => write!(f, "RightParenthes"),
+            Token::LeftBracket => write!(f, "LeftBracket"),
+            Token::RightBracket => write!(f, "RightBracket"),
+            Token::LeftBrace => write!(f, "LeftBrace"),
+            Token::RightBrace => write!(f, "RightBrace"),
             Token::Unknown => write!(f, "Unknown"),
         }
     }

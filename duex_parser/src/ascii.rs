@@ -1,11 +1,29 @@
 #[derive(Copy, Clone)]
 pub enum ASCII {
+    // 特殊符号
     Newline = 10,
     Return = 13,
     Whitespace = 32,
 
+    // 小括号
+    LeftParenthes = 40,
+    RightParenthes = 41,
+    // 中括号
+    LeftBracket = 91,
+    RightBracket = 93,
+    // 大括号
+    LeftBrace = 123,
+    RightBrace = 125,
+
+    // symbol
     Plus = 43,
+    Equal = 61,
+
+    // dot
     Dot = 46,
+
+    // semicolon
+    Semicolon = 59,
 
     // number
     Zero = 48,
@@ -18,10 +36,6 @@ pub enum ASCII {
     Seven = 55,
     Eight = 56,
     Nine = 57,
-
-    Semicolon = 59,
-
-    Equal = 61,
 }
 
 pub fn from_u8(num: u8) -> Option<ASCII> {
@@ -29,6 +43,13 @@ pub fn from_u8(num: u8) -> Option<ASCII> {
         10 => Some(ASCII::Newline),
         13 => Some(ASCII::Return),
         32 => Some(ASCII::Whitespace),
+
+        40 => Some(ASCII::LeftParenthes),
+        41 => Some(ASCII::RightParenthes),
+        91 => Some(ASCII::LeftBracket),
+        93 => Some(ASCII::RightBracket),
+        123 => Some(ASCII::LeftBrace),
+        125 => Some(ASCII::RightBrace),
 
         43 => Some(ASCII::Plus),
         46 => Some(ASCII::Dot),
