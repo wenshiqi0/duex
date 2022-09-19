@@ -71,10 +71,13 @@ impl Node {
 pub fn debug_syntax_tree(node: Rc<RefCell<Node>>) {
     let state = node.borrow().get_state();
 
-    for _ in 0..=state.depth {
-        print!("--");
+    for _ in 1..=state.depth {
+        print!("   ");
     }
-    println!(" {}", state);
+    if state.depth > 0 {
+        print!("| ");
+    }
+    println!("{}", state);
 
     match node.borrow().first_child.clone() {
         Some(child) => debug_syntax_tree(child),

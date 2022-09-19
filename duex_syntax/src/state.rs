@@ -25,6 +25,7 @@ impl Display for SyntaxState {
         match self.token {
             Token::Start => write!(f, "Start"),
             Token::Unknown => write!(f, "Unknown"),
+            Token::Block => write!(f, "Block"),
             _ => write!(f, "{}::{}", self.token, self.scope_name),
         }
     }
