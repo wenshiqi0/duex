@@ -137,6 +137,8 @@ fn parse_after_keyword(keyword: &str) -> Token {
     match keyword {
         "let" => Token::Variable,
         "const" => Token::Constant,
+        "function" => Token::Function,
+        "class" => Token::Class,
         _ => Token::Unknown,
     }
 }
@@ -221,7 +223,7 @@ pub fn parse(last: &Rc<RefCell<Node>>, character: Character, frag: &str) -> Toke
         _ => match last_token {
             Token::Keyword => parse_after_keyword(&last_scope_name),
             _ => match frag {
-                "let" | "const" => Token::Keyword,
+                "let" | "const" | "function" | "class" => Token::Keyword,
                 "=" => Token::Equal,
                 "+=" => Token::PlusEqual,
                 "++" => Token::PlusPlus,

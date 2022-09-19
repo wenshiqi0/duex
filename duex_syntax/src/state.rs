@@ -6,6 +6,8 @@ use crate::token::Token;
 pub struct SyntaxState {
     pub scope_name: String,
     pub token: Token,
+    pub depth: usize,
+
 }
 
 impl SyntaxState {
@@ -13,6 +15,7 @@ impl SyntaxState {
         SyntaxState {
             scope_name: "".to_owned(),
             token: Token::Unknown,
+            depth: 0,
         }
     }
 }

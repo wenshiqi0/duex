@@ -1,7 +1,6 @@
 use std::{
-    borrow::BorrowMut,
     cell::RefCell,
-    rc::{Rc, Weak},
+    rc::{Rc, Weak}, borrow::BorrowMut,
 };
 
 use crate::state::SyntaxState;
@@ -36,6 +35,10 @@ impl Node {
         self.state.scope_name = scope_name.to_owned();
     }
 
+    pub fn set_depth(&mut self, depth: usize) {
+        self.state.depth = depth;
+    }
+
     pub fn get_first_child(&self) -> Option<Rc<RefCell<Node>>> {
         self.first_child.clone()
     }
@@ -60,14 +63,18 @@ impl Node {
         *self.parent.borrow_mut() = Some(Rc::downgrade(parent));
     }
 
-    pub fn set_weak_parent(&mut self, parent: Option<Weak<RefCell<Node>>>) {
-        *self.parent.borrow_mut() = parent;
+    pub fn set_weak_parent(&mut self, parent: Weak<RefCell<Node>>) {
+        *self.parent.borrow_mut() = Some(parent.clone());
     }
 }
 
 pub fn debug_syntax_tree(node: Rc<RefCell<Node>>) {
     let state = node.borrow().get_state();
-    println!("debug: {}", state);
+
+    for _ in 0..=state.depth {
+        print!("--");
+    }
+    println!(" {}", state);
 
     match node.borrow().first_child.clone() {
         Some(child) => debug_syntax_tree(child),

@@ -4,6 +4,10 @@ use std::fmt;
 pub enum Token {
     Start,
     Keyword,
+    Function,
+    Class,
+
+    Block,
 
     Equal,
     PlusEqual,
@@ -35,6 +39,9 @@ impl fmt::Display for Token {
         match self {
             Token::Start => write!(f, "Start"),
             Token::Keyword => write!(f, "Keyword"),
+            Token::Function => write!(f, "Function"),
+            Token::Class => write!(f, "Class"),
+            Token::Block => write!(f, "Block"),
             Token::Equal => write!(f, "Equal"),
             Token::PlusEqual => write!(f, "PlusEqual"),
             Token::PlusPlus => write!(f, "PlusPlus"),
