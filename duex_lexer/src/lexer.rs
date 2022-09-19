@@ -21,7 +21,6 @@ pub struct Lexer {
 
 fn set_node_sibling(brother: &Rc<RefCell<Node>>, node: &Rc<RefCell<Node>>) {
     let state = brother.borrow_mut().get_state().clone();
-    println!("sibling {} {}", state, state.depth);
     brother.borrow_mut().set_sibling(&node);
     match brother.borrow().get_parent() {
         Some(parent) => {
@@ -37,7 +36,6 @@ fn set_node_parent(parent: &Rc<RefCell<Node>>, node: &Rc<RefCell<Node>>) {
     parent.borrow_mut().set_first_child(&node);
     node.borrow_mut().set_parent(&parent.clone());
     node.borrow_mut().set_depth(state.depth + 1);
-    println!("child {} {}", state, state.depth + 1);
 }
 
 impl Lexer {
