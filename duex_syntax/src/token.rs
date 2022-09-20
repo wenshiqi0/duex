@@ -6,6 +6,7 @@ pub enum Token {
     Keyword,
     Function,
     Class,
+    Instantiate,
 
     Block,
 
@@ -41,6 +42,7 @@ impl fmt::Display for Token {
             Token::Keyword => write!(f, "Keyword"),
             Token::Function => write!(f, "Function"),
             Token::Class => write!(f, "Class"),
+            Token::Instantiate => write!(f, "Instantiate"),
             Token::Block => write!(f, "Block"),
             Token::Equal => write!(f, "Equal"),
             Token::PlusEqual => write!(f, "PlusEqual"),

@@ -24,7 +24,6 @@ pub enum Character {
     LeftBrace,
     RightBrace,
     // Block,
-
     Quote,
     DoubleQuote,
     BackQuote,
@@ -139,6 +138,7 @@ fn parse_after_keyword(keyword: &str) -> Token {
         "const" => Token::Constant,
         "function" => Token::Function,
         "class" => Token::Class,
+        "new" => Token::Instantiate,
         _ => Token::Unknown,
     }
 }
@@ -223,7 +223,7 @@ pub fn parse(last: &Rc<RefCell<Node>>, character: Character, frag: &str) -> Toke
         _ => match last_token {
             Token::Keyword => parse_after_keyword(&last_scope_name),
             _ => match frag {
-                "let" | "const" | "function" | "class" => Token::Keyword,
+                "let" | "const" | "function" | "class" | "new" => Token::Keyword,
                 "=" => Token::Equal,
                 "+=" => Token::PlusEqual,
                 "++" => Token::PlusPlus,
