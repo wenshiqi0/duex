@@ -222,8 +222,11 @@ impl Lexer {
 
             match token.clone() {
                 Some(t) => match t {
-                    Token::Function => self.is_func_define = true,
-                    _ => (),
+                    Token::Function => {
+                        self.is_func_define = true;
+                        break;
+                    },
+                    _ => break,
                 },
                 None => {
                     if index == (bytes.len() - 1) {
@@ -247,5 +250,9 @@ impl Lexer {
 
     pub fn next(&mut self) -> Option<Token> {
         self.parse_next()
+    }
+
+    pub fn get_current(&self) -> Node {
+        self.current.borrow().clone()
     }
 }

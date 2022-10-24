@@ -37,6 +37,11 @@ dependencies = [
 [[package]]
 name = "duex_runtime"
 version = "0.1.0"
+dependencies = [
+ "duex_lexer",
+ "duex_parser",
+ "duex_syntax",
+]
 
 [[package]]
 name = "duex_syntax"
